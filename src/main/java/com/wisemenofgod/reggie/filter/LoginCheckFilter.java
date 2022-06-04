@@ -56,7 +56,7 @@ public class LoginCheckFilter implements Filter {
 
         HttpSession session = request.getSession();
         if (session.getAttribute("employee")!=null){
-            BaseContext.setCurrentId((Long) request.getSession().getAttribute("emplyee"));
+            BaseContext.setCurrentId((Long) request.getSession().getAttribute("employee"));
             filterChain.doFilter(request, response);
             return;
         }
