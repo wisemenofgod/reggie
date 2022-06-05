@@ -24,7 +24,7 @@ import java.time.Duration;
     2021-09-19-10:51
 */
 @SuppressWarnings("all")
-@EnableCaching
+//@EnableCaching
 @Configuration
 public class RedisConfig extends CachingConfigurerSupport {
 
@@ -41,12 +41,13 @@ public class RedisConfig extends CachingConfigurerSupport {
 //key序列化方式
         template.setKeySerializer(redisSerializer);
 //value序列化
-        template.setValueSerializer(jackson2JsonRedisSerializer);
+        //template.setValueSerializer(jackson2JsonRedisSerializer);
 //value hashmap序列化
-        template.setHashValueSerializer(jackson2JsonRedisSerializer);
+        //template.setHashValueSerializer(jackson2JsonRedisSerializer);
         return template;
     }
 
+    /*
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory factory) {
         RedisSerializer<String> redisSerializer = new StringRedisSerializer();
@@ -67,5 +68,7 @@ public class RedisConfig extends CachingConfigurerSupport {
                 .build();
         return cacheManager;
     }
+    */
+
 }
 

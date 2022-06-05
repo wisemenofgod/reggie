@@ -18,10 +18,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.TimeToLive;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("all")
 @Slf4j
@@ -36,6 +41,9 @@ public class DishController {
 
     @Autowired
     private DishFlavorService dishFlavorService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @PostMapping
     public R<String> save(@RequestBody DishDto dishdto){
@@ -54,6 +62,9 @@ public class DishController {
 
         //dishService.saveWithFlavor(dishdto);
         dishService.updateWithFlavor(dishdto);
+
+        Set keys = redisTemplate.keys("dish_*");
+        redisTemplate.delete(keys);
 
         return R.success("新增菜品成功!");
 
@@ -106,6 +117,15 @@ public class DishController {
 //    }
     @GetMapping("/list")
     public R<List<DishDto>> getDishList(Dish dish){
+        List<DishDto> dtoList = null;
+
+        String redisDishKey = "dish_"+dish.getCategoryId()+"__"+dish.getStatus();
+        ValueOperations valueOperations = redisTemplate.opsForValue();
+        dtoList =(List<DishDto>) valueOperations.get(redisDishKey);
+        if (dtoList!=null){
+            return R.success(dtoList);
+        }
+
 
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Dish::getStatus, 1);
@@ -115,11 +135,10 @@ public class DishController {
         List<Dish> list = dishService.list(queryWrapper);
 
 
-        List<DishDto> dtoList = new ArrayList<>();
+        dtoList = new ArrayList<>();
         for (Dish dish1 : list) {
             DishDto dishDto = new DishDto();
             BeanUtils.copyProperties(dish1, dishDto);
-
 
             Long id = dish1.getId();
             LambdaQueryWrapper<DishFlavor> queryWrapper1 = new LambdaQueryWrapper<>();
@@ -128,9 +147,8 @@ public class DishController {
 
             dishDto.setFlavors(list1);
             dtoList.add(dishDto);
-
-
         }
+        valueOperations.set(redisDishKey, dtoList,60, TimeUnit.MINUTES);
         return R.success(dtoList);
     }
 
