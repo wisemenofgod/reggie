@@ -34,6 +34,8 @@ public class SetmealController {
     @Autowired
     private CategoryService categoryService;
 
+
+    //新增套餐 + 并添加setmeal_dish
     @PostMapping
     @CacheEvict(value = "setmealCache" , allEntries = true)
     public R<String> save(@RequestBody SetmealDto setmealDto){
@@ -43,16 +45,17 @@ public class SetmealController {
         return R.success("保存套餐成功!");
     }
 
+    //分页查询套餐
     @GetMapping("/page")
     public R<Page> page(int page , int pageSize , String name) {
 
         Page<Setmeal> pageInfo = new Page(page, pageSize);
 
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper();
-        queryWrapper.like(Setmeal::getName, name);
+        queryWrapper.like(name!=null,Setmeal::getName, name);
         queryWrapper.orderByAsc(Setmeal::getUpdateTime);
 
-        setmealService.page(pageInfo);
+        setmealService.page(pageInfo,queryWrapper);
 
         Page<SetmealDto> pageDto = new Page(page, pageSize);
         BeanUtils.copyProperties(pageInfo, pageDto,"records");
@@ -73,6 +76,7 @@ public class SetmealController {
         return R.success(pageDto);
     }
 
+    //删除套餐 + 并判断是否停售
     @DeleteMapping
     @CacheEvict(value = "setmealCache" , allEntries = true)
     public R<String> del(@RequestParam List<Long> ids){
@@ -80,6 +84,8 @@ public class SetmealController {
         return R.success("删除成功!");
     }
 
+
+    //套餐进行停售 + 批量停售
     @PostMapping("/status/{s}")
     @CacheEvict(value = "setmealCache" , allEntries = true)
     public R<String> changeStatus(@PathVariable int s ,@RequestParam List<Long> ids){
@@ -100,12 +106,14 @@ public class SetmealController {
     }
 
 
+    //修改套餐是 进行回表查询 + 数据展现到页面上
     @GetMapping("/{id}")
     public R<SetmealDto> getSetmealDto(@PathVariable Long id){
         SetmealDto setmealDto = setmealService.getSetmealWithOther(id);
         return R.success(setmealDto);
     }
 
+    //更新套餐的信息  先更新 setmeal表,在根据id删除setmeal_dish表中的数据,在重新批量添加
     @PutMapping
     @CacheEvict(value = "setmealCache" , allEntries = true)
     public R<String> update(@RequestBody SetmealDto setmealDto){
@@ -114,6 +122,8 @@ public class SetmealController {
         return R.success("保存套餐成功!");
     }
 
+
+    //根据套餐的分类id查询出该分类下的所有套餐
     @GetMapping("/list")
     @Cacheable(value = "setmealCache" , key = "#setmeal.categoryId+'_'+#setmeal.status")
     public R<List<Setmeal>> list(Setmeal setmeal){

@@ -31,7 +31,6 @@ public class AddressBookController {
     @PostMapping
     public R<String> save(@RequestBody AddressBook addressBook, HttpServletRequest request){
         addressBook.setUserId((Long) request.getSession().getAttribute("user"));
-
         boolean save = addressBookService.save(addressBook);
         if (save){
             return R.success("地址保存成功");
@@ -58,7 +57,7 @@ public class AddressBookController {
     }
 
     /**
-     * 根据id查询地址
+     * 根据id查询地址    回写的时候
      */
     @GetMapping("/{id}")
     public R get(@PathVariable Long id) {
@@ -90,7 +89,7 @@ public class AddressBookController {
     }
 
     /**
-     * 查询指定用户的全部地址
+     * 查询指定用户的全部地址     展示用户的全部地址信息
      */
     @GetMapping("/list")
     public R<List<AddressBook>> list(AddressBook addressBook, HttpServletRequest request) {

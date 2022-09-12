@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@SuppressWarnings("all")
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implements OrderService {
 
     @Autowired

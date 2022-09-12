@@ -49,21 +49,17 @@ public class DishController {
     @Autowired
     private CacheManager cacheManager;
 
+    //新增菜品 并 新增菜品口味
     @PostMapping
     public R<String> save(@RequestBody DishDto dishdto){
-
-
-        //dishService.saveWithFlavor(dishdto);
-        dishService.updateWithFlavor(dishdto);
-
+        dishService.saveWithFlavor(dishdto);
+        //dishService.updateWithFlavor(dishdto);
         return R.success("新增菜品成功!");
-
     }
 
+    // 更新菜品
     @PutMapping
     public R<String> update(@RequestBody DishDto dishdto){
-
-
         //dishService.saveWithFlavor(dishdto);
         dishService.updateWithFlavor(dishdto);
 
@@ -71,9 +67,9 @@ public class DishController {
         redisTemplate.delete(keys);
 
         return R.success("新增菜品成功!");
-
     }
 
+    //分页查询菜品
     @GetMapping("/page")
     public R<Page> page(int page , int pageSize , String name){
 
@@ -101,6 +97,8 @@ public class DishController {
         return R.success(dtoPage);
     }
 
+
+    //修改菜品,通过id查询到信息后回写
     @GetMapping("/{id}")
     public R<DishDto> getDishDto(@PathVariable Long id){
 
@@ -119,6 +117,8 @@ public class DishController {
 //        List<Dish> list = dishService.list(queryWrapper);
 //        return R.success(list);
 //    }
+
+    //通过接受的分类id查询该分类下面的菜品信息
     @GetMapping("/list")
     public R<List<DishDto>> getDishList(Dish dish){
         List<DishDto> dtoList = null;
@@ -129,7 +129,6 @@ public class DishController {
         if (dtoList!=null){
             return R.success(dtoList);
         }
-
 
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Dish::getStatus, 1);
@@ -156,12 +155,14 @@ public class DishController {
         return R.success(dtoList);
     }
 
+    //删除菜品,包括口味
     @DeleteMapping
     public R<String> del(@RequestParam List<Long> ids){
         dishService.removeWithOther(ids);
         return R.success("删除成功!");
     }
 
+    // 对菜品进行批量停售,和批量起售功能
     @PostMapping("/status/{s}")
     public R<String> changeStatus(@PathVariable int s ,@RequestParam List<Long> ids){
 

@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import java.util.List;
-
+@SuppressWarnings("all")
 @Slf4j
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurationSupport {

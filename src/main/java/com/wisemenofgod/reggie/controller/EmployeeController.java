@@ -78,7 +78,7 @@ public class EmployeeController {
         //设置初始密码，123456 加密
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
 
-        //employee.setCreateTime(LocalDateTime.now());
+//        employee.setCreateTime(LocalDateTime.now());
         //employee.setUpdateTime(LocalDateTime.now());
 
         long empID = (Long) request.getSession().getAttribute("employee");

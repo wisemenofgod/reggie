@@ -69,6 +69,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
         //保存菜品口味相关信息
         dishFlavorService.saveBatch(dishdto.getFlavors());
+        //dishFlavorService.updateBatchById(dishdto.getFlavors());
     }
 
     @Override
