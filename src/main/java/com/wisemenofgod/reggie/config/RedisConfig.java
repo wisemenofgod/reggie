@@ -3,6 +3,8 @@ package com.wisemenofgod.reggie.config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -27,6 +29,16 @@ import java.time.Duration;
 //@EnableCaching
 @Configuration
 public class RedisConfig extends CachingConfigurerSupport {
+//    @Bean
+//    @ConditionalOnMissingBean(
+//            name = {"redisTemplate"}
+//    )
+//    @ConditionalOnSingleCandidate(RedisConnectionFactory.class)
+//    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+//        RedisTemplate<Object, Object> template = new RedisTemplate();
+//        template.setConnectionFactory(redisConnectionFactory);
+//        return template;
+//    }
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
